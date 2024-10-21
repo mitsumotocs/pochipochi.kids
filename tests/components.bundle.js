@@ -1,0 +1,41 @@
+class Button extends HTMLElement {
+    static HTML = `
+    <style>
+        * {
+            color: red;
+        }
+        :host {
+            display: inline-block;
+            background-color: #ccc;
+            box-shadow: inset 0 -4px 0 0 #999;
+            padding: 8px 8px 12px 8px;
+            border-radius: 4px;
+        }
+        </style>
+    <slot>Default Label</slot>
+`;
+
+    constructor() {
+        super();
+
+        this.root = this.attachShadow({ mode: 'open' });
+        //console.log(this.root);
+
+        this.root.innerHTML = Button.HTML.trim();
+    }
+}
+
+const PPK = {
+    Button,
+};
+
+/*
+import { Button } from "../src/Button.js"; 
+console.log(Button);
+
+customElements.define('ppk-button', Button);
+*/
+
+//console.log(PPK);
+
+customElements.define('ppk-button', PPK.Button);
