@@ -1,3 +1,6 @@
 .DS_Store
+/.cache/*
 /.vscode/*
 /*.txt
+/dist/*
+/node_modules/*
