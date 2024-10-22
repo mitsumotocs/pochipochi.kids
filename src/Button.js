@@ -1,6 +1,8 @@
 export class Button extends HTMLElement {
     static HTML = `
     <style>
+    @import "./Button.css";
+    /*
         * {
             color: red;
         }
@@ -11,6 +13,7 @@ export class Button extends HTMLElement {
             padding: 8px 8px 12px 8px;
             border-radius: 4px;
         }
+            */
         </style>
     <slot>Default Label</slot>
 `;
