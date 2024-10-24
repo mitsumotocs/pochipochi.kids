@@ -1,27 +1,55 @@
+function html(strings) {
+    return strings.join().trim();
+}
+
 class Button extends HTMLElement {
-    static HTML = `
-    <style>
-        * {
-            color: red;
-        }
-        :host {
-            display: inline-block;
-            background-color: #ccc;
-            box-shadow: inset 0 -4px 0 0 #999;
-            padding: 8px 8px 12px 8px;
-            border-radius: 4px;
-        }
+    static HTML = html`
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            :host {
+                display: inline-block;
+                background-color: #ccc;
+                box-shadow: inset 0 -4px 0 0 #999;
+                padding: 8px 8px 12px 8px;
+                border-radius: 4px;
+                font-weight: bold;
+                color: blue;
+            }
+            :host(.pressed) {
+                color: red;
+            }
         </style>
-    <slot>Default Label</slot>
-`;
+        <slot>Button</slot>
+    `;
 
     constructor() {
         super();
 
-        this.root = this.attachShadow({ mode: 'open' });
-        //console.log(this.root);
+        this.root = this.attachShadow({ mode: "open" });
+        this.root.innerHTML = Button.HTML;
 
-        this.root.innerHTML = Button.HTML.trim();
+        this.addEventListener("pointerdown", this.press);
+        this.addEventListener("pointerup", this.unpress);
+    }
+
+    press() {
+        this.classList.add("pressed");
+
+        this.dispatchEvent(new CustomEvent("ppk-button-press", {
+            bubbles: true,
+            composed: true,
+        }));
+    }
+
+    unpress() {
+        this.classList.remove("pressed");
+
+        this.dispatchEvent(new CustomEvent("ppk-button-unpress", {
+            bubbles: true,
+            composed: true,
+        }));
     }
 }
 
@@ -29,13 +57,8 @@ const PPK = {
     Button,
 };
 
-/*
-import { Button } from "../src/Button.js"; 
-console.log(Button);
+customElements.define("ppk-button", PPK.Button);
 
-customElements.define('ppk-button', Button);
-*/
-
-//console.log(PPK);
-
-customElements.define('ppk-button', PPK.Button);
+document.addEventListener("ppk-button-press", (event) => {
+    console.log(event.type, event.target);
+});
