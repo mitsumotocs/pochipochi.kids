@@ -1,6 +1,8 @@
-import { html } from "./functions.js";
+function html(strings) {
+    return strings.join().trim();
+}
 
-export class Button extends HTMLElement {
+class Button extends HTMLElement {
     static HTML = html`
         <style>
             * {
@@ -30,12 +32,30 @@ export class Button extends HTMLElement {
         this.root = this.attachShadow({ mode: "open" });
         this.root.innerHTML = Button.HTML;
 
-        window.PPK.buttonsPressed ||= [];
+        //this.addEventListener("pointerdown", this.press);
+        //this.addEventListener("pointerup", this.unpress);
+        //document.addEventListener("pointerdown", this.dpress.bind(this));
 
-        this
-            .bindEventListener(document, "pointerdown", this.press)
-            .bindEventListener(document, ["pointerup", "pointercancel"], this.unpress)
-            .enableEventListeners();
+        if (!(window.PPK.buttonsPressed instanceof Array)) {
+            window.PPK.buttonsPressed = [];
+        }
+
+        this.bindEventListener(document, "pointerdown", this.press);
+        this.bindEventListener(document, ["pointerup", "pointercancel"], this.unpress); // TODO: this seems not working!
+        this.enableEventListeners();
+
+        /*
+        document.addEventListener("pointerup", (event) => {
+            if (!this.root.host.contains(event.target)) {
+                return;
+            }
+    
+            console.log(event.target);
+        });
+        */
+
+
+        //console.log(this.eventListenerMap);
     }
 
     bindEventListener(element, type, listener, options = {}) {
@@ -112,3 +132,27 @@ export class Button extends HTMLElement {
         window.PPK.buttonsPressed = [];
     }
 }
+
+const PPK = {
+    Button,
+};
+
+window.PPK = PPK;
+
+//console.log(window.PPK);
+
+customElements.define("ppk-button", PPK.Button);
+
+document.addEventListener("ppk-button-press", (event) => {
+    console.log(event.type, event.target);
+});
+
+document.addEventListener("ppk-button-unpress", (event) => {
+    console.log(event.type, event.target);
+});
+
+const buttons = document.querySelectorAll("ppk-button");
+//console.log(buttons);
+buttons.item(0).addEventListener("ppk-button-press", (event) => {
+    console.log(event.type, event.target);
+});
