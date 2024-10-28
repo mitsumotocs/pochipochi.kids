@@ -2,5 +2,4 @@
 /.cache/*
 /.vscode/*
 /*.txt
-/dist/*
-/node_modules/*
+/public_html/assets/*
