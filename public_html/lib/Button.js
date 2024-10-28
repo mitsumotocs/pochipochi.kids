@@ -1,31 +1,39 @@
 import { html } from "./functions.js";
+import { ComponentBase } from "./ComponentBase.js";
 
-export class Button extends HTMLElement {
+export class Button extends ComponentBase {
     static HTML = html`
         <style>
             * {
                 box-sizing: border-box;
             }
             :host {
+                --background-color: #666;
+                --shadow-color: #333;
+                --color: #fff;
+                --font-family: sans-serif;
+            }
+            :host {
                 display: inline-block;
-                background-color: #ccc;
-                box-shadow: inset 0 -4px 0 0 #999;
+                background-color: var(--background-color);
+                color: var(--color);
+                box-shadow: inset 0 -4px 0 0 var(--shadow-color);
                 padding: 8px 8px 12px 8px;
                 border-radius: 4px;
                 font-weight: bold;
-                color: blue;
+                font-family: var(--font-family);
             }
             :host(.pressed) {
-                color: red;
+                box-shadow: none;
+                padding-bottom: calc(12px - 4px);
+                transform: translateY(4px);
             }
         </style>
-        <slot>Button</slot>
+        <slot></slot>
     `;
 
     constructor() {
         super();
-
-        this.eventListenerMap = new Map();
 
         this.root = this.attachShadow({ mode: "open" });
         this.root.innerHTML = Button.HTML;
@@ -37,46 +45,6 @@ export class Button extends HTMLElement {
             .bindEventListener(document, ["pointerup", "pointercancel"], this.unpress)
             .enableEventListeners();
     }
-
-    bindEventListener(element, type, listener, options = {}) {
-        const entry = {
-            type: type,
-            listener: listener.bind(this),
-            options: options,
-        };
-
-        if (this.eventListenerMap.has(element)) {
-            const entries = this.eventListenerMap.get(element);
-            entries.push(entry);
-
-            return this;
-        }
-
-        this.eventListenerMap.set(element, [entry]);
-
-        return this;
-    }
-
-    enableEventListeners() {
-        for (const [element, entries] of this.eventListenerMap) {
-            //console.log(element, entries);
-            for (const entry of entries) {
-                if (entry.type instanceof Array) {
-                    for (const type of entry.type) {
-                        element.addEventListener(type, entry.listener, entry.options);
-                    }
-
-                    continue;
-                }
-
-                element.addEventListener(entry.type, entry.listener, entry.options);
-            }
-        }
-
-        return this;
-    }
-
-
 
     press(event) {
         if (!this.root.host.contains(event.target)) {

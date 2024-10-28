@@ -4,15 +4,30 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!--<script src="./components.bundle.js" defer></script>-->
+    <link rel="stylesheet" href="../assets/fontawesome/css/fontawesome.css">
+    <link rel="stylesheet" href="../assets/fontawesome/css/solid.css">
     <script type="module" src="./components.js"></script>
+    <style>
+        /* To theme components */
+        /*
+        ppk-button {
+            --background-color: #345;
+            --color: #cde;
+        }
+        */
+    </style>
 </head>
 
 <body>
     <h1>The Components</h1>
     <h2>Button</h2>
     <ppk-button>Button #1</ppk-button>
-    <ppk-button>Button #2</ppk-button>
+    <!--
+    <ppk-button><i slot="icon" class="fa-solid fa-grid"></i>Button #2</ppk-button>
+    <ppk-button><i slot="icon" class="fa-solid fa-grid"></i></ppk-button>
+-->
+    <ppk-button><i class="fa-solid fa-grid"></i> Button #2</ppk-button>
+    <ppk-button><i class="fa-solid fa-grid"></i></ppk-button>
 </body>
 
 </html>

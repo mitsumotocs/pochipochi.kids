@@ -11,8 +11,10 @@ document.addEventListener("ppk-button-unpress", (event) => {
     console.log(event.type, event.target);
 });
 
+/*
 const buttons = document.querySelectorAll("ppk-button");
 //console.log(buttons);
 buttons.item(0).addEventListener("ppk-button-press", (event) => {
     console.log(event.type, event.target);
 });
+*/

@@ -1,5 +1,7 @@
 export class ComponentBase extends HTMLElement {
     constructor() {
+        super();
+
         if (new.target === ComponentBase) {
             throw new TypeError('Cannot construct ComponentBase instances directly');
         }
