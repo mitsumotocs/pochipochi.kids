@@ -2,60 +2,15 @@ function html(strings) {
     return strings.join().trim();
 }
 
-class Button extends HTMLElement {
-    static HTML = html`
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-            :host {
-                display: inline-block;
-                background-color: #ccc;
-                box-shadow: inset 0 -4px 0 0 #999;
-                padding: 8px 8px 12px 8px;
-                border-radius: 4px;
-                font-weight: bold;
-                color: blue;
-            }
-            :host(.pressed) {
-                color: red;
-            }
-        </style>
-        <slot>Button</slot>
-    `;
-
+class ComponentBase extends HTMLElement {
     constructor() {
         super();
 
-        this.eventListenerMap = new Map();
-
-        this.root = this.attachShadow({ mode: "open" });
-        this.root.innerHTML = Button.HTML;
-
-        //this.addEventListener("pointerdown", this.press);
-        //this.addEventListener("pointerup", this.unpress);
-        //document.addEventListener("pointerdown", this.dpress.bind(this));
-
-        if (!(window.PPK.buttonsPressed instanceof Array)) {
-            window.PPK.buttonsPressed = [];
+        if (new.target === ComponentBase) {
+            throw new TypeError('Cannot construct ComponentBase instances directly');
         }
 
-        this.bindEventListener(document, "pointerdown", this.press);
-        this.bindEventListener(document, ["pointerup", "pointercancel"], this.unpress); // TODO: this seems not working!
-        this.enableEventListeners();
-
-        /*
-        document.addEventListener("pointerup", (event) => {
-            if (!this.root.host.contains(event.target)) {
-                return;
-            }
-    
-            console.log(event.target);
-        });
-        */
-
-
-        //console.log(this.eventListenerMap);
+        this.eventListenerMap = new Map();
     }
 
     bindEventListener(element, type, listener, options = {}) {
@@ -96,7 +51,70 @@ class Button extends HTMLElement {
         return this;
     }
 
+    disableEventListeners() {
+        for (const [element, entries] of this.eventListenerMap) {
+            //console.log(element, entries);
+            for (const entry of entries) {
+                if (entry.type instanceof Array) {
+                    for (const type of entry.type) {
+                        element.removeEventListener(type, entry.listener);
+                    }
 
+                    continue;
+                }
+
+                element.removeEventListener(entry.type, entry.listener);
+            }
+        }
+
+        return this;
+    }
+}
+
+class Button extends ComponentBase {
+    static HTML = html`
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            :host {
+                --background-color: #666;
+                --shadow-color: #333;
+                --color: #fff;
+                --font-family: sans-serif;
+            }
+            :host {
+                display: inline-block;
+                background-color: var(--background-color);
+                color: var(--color);
+                box-shadow: inset 0 -4px 0 0 var(--shadow-color);
+                padding: 8px 8px 12px 8px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-family: var(--font-family);
+            }
+            :host(.pressed) {
+                box-shadow: none;
+                padding-bottom: calc(12px - 4px);
+                transform: translateY(4px);
+            }
+        </style>
+        <slot>Button</slot>
+    `;
+
+    constructor() {
+        super();
+
+        this.root = this.attachShadow({ mode: "open" });
+        this.root.innerHTML = Button.HTML;
+
+        window.PPK.buttonsPressed ||= [];
+
+        this
+            .bindEventListener(document, "pointerdown", this.press)
+            .bindEventListener(document, ["pointerup", "pointercancel"], this.unpress)
+            .enableEventListeners();
+    }
 
     press(event) {
         if (!this.root.host.contains(event.target)) {
@@ -151,8 +169,10 @@ document.addEventListener("ppk-button-unpress", (event) => {
     console.log(event.type, event.target);
 });
 
+/*
 const buttons = document.querySelectorAll("ppk-button");
 //console.log(buttons);
 buttons.item(0).addEventListener("ppk-button-press", (event) => {
     console.log(event.type, event.target);
 });
+*/
