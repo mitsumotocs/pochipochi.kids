@@ -2,6 +2,7 @@ import { PPK } from "../lib/PPK.js";
 //console.log(window.PPK);
 
 customElements.define("ppk-button", PPK.Button);
+customElements.define("ppk-numberselector", PPK.NumberSelector);
 
 document.addEventListener("ppk-button-press", (event) => {
     console.log(event.type, event.target);
