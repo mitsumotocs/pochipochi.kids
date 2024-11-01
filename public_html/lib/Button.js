@@ -4,32 +4,46 @@ import { ComponentBase } from "./ComponentBase.js";
 export class Button extends ComponentBase {
     static HTML = html`
         <style>
-            * {
-                box-sizing: border-box;
-            }
             :host {
                 --background-color: #666;
                 --shadow-color: #333;
                 --color: #fff;
                 --font-family: sans-serif;
+                --font-weight: bold;
+                --font-size: 20px;
             }
             :host {
-                display: inline-block;
+                display: inline-flex;
+                box-sizing: border-box;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                justify-content: center;
+                align-items: center;
                 background-color: var(--background-color);
                 color: var(--color);
-                box-shadow: inset 0 -4px 0 0 var(--shadow-color);
-                padding: 8px 8px 12px 8px;
-                border-radius: 4px;
-                font-weight: bold;
-                font-family: var(--font-family);
+                box-shadow: inset 0 calc((var(--font-size) / 3) * -1) 0 0 var(--shadow-color);
+                border-radius: calc(var(--font-size) / 3);
+                touch-action: manipulation;
+                user-select: none;
+                -webkit-user-select: none;
+                cursor: pointer;
             }
             :host(.pressed) {
                 box-shadow: none;
-                padding-bottom: calc(12px - 4px);
-                transform: translateY(4px);
+                transform: translateY(calc(var(--font-size) / 3));
+                height: calc(100% - (var(--font-size) / 3));
+            }
+            :host>label {
+                display: block;
+                margin-bottom: calc(var(--font-size) / 3);
+                white-space: nowrap;
+                font-family: var(--font-family);
+                font-weight: var(--font-weight);
+                font-size: var(--font-size);
             }
         </style>
-        <slot></slot>
+        <label><slot></slot></label>
     `;
 
     constructor() {
